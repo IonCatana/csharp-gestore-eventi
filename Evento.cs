@@ -73,9 +73,9 @@ namespace csharp_gestore_eventi
             {
                 SetDataEvento(data);
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (InvalidTimeZoneException e)
             {
-                Console.WriteLine("La data inserita è nel passato! ERRORE:" + e.ParamName);
+                Console.WriteLine("La data inserita è nel passato!");
             }
 
             try
@@ -86,6 +86,54 @@ namespace csharp_gestore_eventi
             {
                 Console.WriteLine("Il numero inserito è negativo! ERRORE: " + e.ParamName);
             }
+            this.nPostiPrenotati = 0;
+        }
+
+        //--- Metodi ---
+        public int nPostiDisponibili()
+        {
+            return this.MaxCapienza - this.nPostiPrenotati;
+        }
+        public void PrenotaPosti(int nPrenotazioni)
+        {
+            if (this.dataEvento < DateTime.Now)
+            {
+                throw new InvalidTimeZoneException();
+            }
+            else if (this.nPostiPrenotati + nPrenotazioni > this.MaxCapienza || this.nPostiPrenotati == this.MaxCapienza)
+            {
+                throw new ArgumentOutOfRangeException(nameof(MaxCapienza), "Limite posti disponibili");
+            }
+            else if (nPrenotazioni == null)
+            {
+                throw new ArgumentNullException(nameof(nPrenotazioni));
+            }
+            else
+            {
+                this.nPostiPrenotati += nPrenotazioni;
+            }
+
+        }
+        public void DisdiciPosti(int nCancellazioni)
+        {
+            if (this.dataEvento < DateTime.Now)
+            {
+                throw new InvalidTimeZoneException();
+            }
+            else if (this.nPostiPrenotati - nCancellazioni < 0 || nPostiDisponibili() == 0)
+            {
+                throw new ArgumentNullException(nameof(nCancellazioni));
+            }
+            else
+            {
+                this.nPostiPrenotati -= nCancellazioni;
+            }
+        }
+        public override string ToString()
+        {
+            string stampaEvento = "";
+            stampaEvento += this.dataEvento.ToString("dd/MM/yyyy") + " - " + this.titoloEvento;
+            return stampaEvento;
         }
 
     }
