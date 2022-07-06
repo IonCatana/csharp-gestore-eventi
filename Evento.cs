@@ -9,5 +9,6 @@ namespace csharp_gestore_eventi
     internal class Evento
     {
 
+
     }
 }
